@@ -1,7 +1,6 @@
-
-// Intensity algorithm 03.07.2006 //
-
-// determines Center of Mass with batches (NB needs a Log directory made) //
+end_of_filename="channels_t0_posZ0.tif" 	// Change to suit the filename that needs selecting. 
+noise_threshold="10"		// Noise threshold - check with find maxima in IJ first. 
+side="right"			// For "left" or "right" side of the image. 
 
 
 
@@ -9,7 +8,7 @@ run("Clear Results");
 
 requires("1.33s"); 
 
-   dir = getDirectory("Choose a Directory ");
+   dir = getDirectory("Choose root Directory ");
 
    count = 0;
 
@@ -21,7 +20,6 @@ requires("1.33s");
 
    processFiles(dir);
 
-   //print(count+" files processed");
 
    
 
@@ -79,7 +77,7 @@ if (!startsWith(list[i],"Log")){
 
   function processFile(path) {
 
-       if (endsWith(path, ".tif") || endsWith(path, ".tiff")) {
+       if (endsWith(path, end_of_filename)) {
 
            open(path);
 
@@ -97,9 +95,15 @@ setBatchMode(true);
 
 run("Z Project...", "start=1 stop="+nSlices+" projection=[Average Intensity]");
 
-//run("Find Maxima...");
+if(side=="left"){
+makeRectangle(0, 0, 428, 684);
+}
+else if(side=="right"){
+makeRectangle(428, 0, 856, 684);
+}
+run("Crop");
 
-run("Find Maxima...", "noise=1000 output=Count");
+run("Find Maxima...", "noise="+noise_threshold+" output=Count");
 
 
 
@@ -107,7 +111,7 @@ run("Find Maxima...", "noise=1000 output=Count");
 
 
 
-//saveAs("Tiff", "+dir+"\\Log\\"+file+"_Ave.Tif");
+saveAs("Tiff", ""+dir+file+"_Ave.tif");
 
 
 
@@ -123,15 +127,6 @@ close();
 
 
 
-//selectWindow("Results");
-
-//run("Text...", "save=);		// Save logged data as root.txt
-
-//run("Close");
-
-
-
-// ****************************************** //
 
 
 
